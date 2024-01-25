@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>401(k) Contribution Calculator</title>
+    <title>BP 401(k) Contribution Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <form id="contributionForm">
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" required>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">401(k)</span> Contribution Calculator</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName" required>
+    <div class="container">
+        <!-- Your form goes here -->
+    </div>
 
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required>
-
-        <label for="salary">Salary:</label>
-        <input type="number" id="salary" name="salary" required>
-
-        <label for="bonus">Bonus Target:</label>
-        <input type="number" id="bonus" name="bonus" required>
-
-        <button type="submit">Calculate</button>
-    </form>
-
-    <div id="result"></div>
+    <footer>
+        <p>BP 401(k) Contribution Calculator © 2024</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
