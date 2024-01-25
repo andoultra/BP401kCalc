@@ -23,13 +23,30 @@
     </header>
 
     <div class="container">
-        <!-- Your form goes here -->
+        <form id="contributionForm">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+
+            <label for="salary">Salary:</label>
+            <input type="number" id="salary" name="salary" required>
+
+            <label for="bonus">Bonus Target:</label>
+            <input type="number" id="bonus" name="bonus" required>
+
+            <button type="submit">Calculate</button>
+        </form>
+
+        <div id="result"></div>
     </div>
 
     <footer>
         <p>BP 401(k) Contribution Calculator © 2024</p>
     </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
