@@ -1,35 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>401(k) Contribution Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+            color: #666;
+        }
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-sizing: border-box; /* Added box-sizing */
+        }
+        input[type="submit"] {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #004494;
+        }
+        .results {
+            margin-top: 20px;
+            background-color: #e8e8e8;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    <h1>401(k) Contribution Calculator</h1>
-    <form id="contributionForm">
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" required><br><br>
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName" required><br><br>
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required><br><br>
-        <label for="salary">Annual Salary ($):</label>
-        <input type="number" id="salary" name="salary" required><br><br>
-        <label for="bonus">Bonus (%):</label>
-        <input type="number" id="bonus" name="bonus" step="0.01" required><br><br>
-        <input type="submit" value="Calculate">
-    </form>
-    <div id="result"></div>
+    <div class="container">
+        <h1>401(k) Contribution Calculator</h1>
+        <form id="contributionForm">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
+            
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required>
+            
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+            
+            <label for="salary">Annual Salary ($):</label>
+            <input type="number" id="salary" name="salary" required>
+            
+            <label for="bonus">Bonus (%):</label>
+            <input type="number" id="bonus" name="bonus" step="0.01" required>
+            
+            <label for="currentContributions">Current Contributions ($):</label>
+            <input type="number" id="currentContributions" name="currentContributions" required>
+            
+            <input type="submit" value="Calculate">
+        </form>
+        <div id="results" class="results"></div>
+    </div>
 
     <script src="app.js"></script>
-
-    <div id="contributionResults">
-    <h2>Contribution Results</h2>
-    <p>Pre-Tax Contribution Percentage: <span id="preTaxPercentage"></span>%</p>
-    <p>After-Tax Contribution Percentage: <span id="afterTaxPercentage"></span>%</p>
-    <p>Employer Match Amount: $<span id="employerMatch"></span></p>
-    <p>Elective Pre-Tax Deferral Amount: $<span id="preTaxAmount"></span></p>
-    <p>Elective After-Tax Deferral Amount: $<span id="afterTaxAmount"></span></p>
-    <p>Total 401(k) Contribution Amount: $<span id="totalContribution"></span></p>
-</div>
 </body>
 </html>
