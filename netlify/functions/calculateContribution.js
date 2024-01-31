@@ -1,16 +1,15 @@
-// /netlify/functions/calculateContribution.js
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
     const data = JSON.parse(event.body);
-    const { dob, salary, bonus } = data;
+    const { dob, salary, bonus, currentPreTax, currentAfterTax } = data; // Added current contributions
     const currentYear = new Date().getFullYear();
     const birthYear = new Date(dob).getFullYear();
     const age = currentYear - birthYear;
 
-    // IRS and BP specific limits for 2024
+    // Constants (consider moving these to environment variables or a config file)
     const IRS_LIMIT = 345000;
     const PRE_TAX_CONTRIBUTION_LIMIT = 23000;
     const CATCH_UP_CONTRIBUTION_LIMIT = 7500;
@@ -21,18 +20,24 @@ exports.handler = async (event) => {
     const totalCompensation = salary + bonusAmount;
     const compensationForCalculation = Math.min(totalCompensation, IRS_LIMIT);
 
-    // Adjust pre-tax contribution limit for catch-up eligibility
     let adjustedPreTaxContributionLimit = PRE_TAX_CONTRIBUTION_LIMIT + (age >= 50 ? CATCH_UP_CONTRIBUTION_LIMIT : 0);
 
-    // Calculate employer match amount
+    // Deduct current contributions from the limits
+    adjustedPreTaxContributionLimit -= currentPreTax;
+    const adjustedAfterTaxContributionLimit = AFTER_TAX_CONTRIBUTION_LIMIT - currentAfterTax;
+
+    // Ensure limits are not negative after deduction
+    adjustedPreTaxContributionLimit = Math.max(0, adjustedPreTaxContributionLimit);
+    const remainingAfterTaxContributionLimit = Math.max(0, adjustedAfterTaxContributionLimit);
+
     const employerMatchAmount = compensationForCalculation * EMPLOYER_MATCH;
 
-    // Calculate elective deferrals in dollar amounts
+    // Adjust calculations to only consider remaining allowable contributions
     const electivePreTaxDeferralAmount = Math.min(compensationForCalculation * (adjustedPreTaxContributionLimit / compensationForCalculation), adjustedPreTaxContributionLimit);
-    const electiveAfterTaxDeferralAmount = Math.min(compensationForCalculation * (AFTER_TAX_CONTRIBUTION_LIMIT / compensationForCalculation), AFTER_TAX_CONTRIBUTION_LIMIT);
+    const electiveAfterTaxDeferralAmount = Math.min(compensationForCalculation * (remainingAfterTaxContributionLimit / compensationForCalculation), remainingAfterTaxContributionLimit);
 
-    // Calculate total 401(k) contribution amount
-    const total401kContributionAmount = employerMatchAmount + electivePreTaxDeferralAmount + electiveAfterTaxDeferralAmount;
+    // Calculate total 401(k) contribution amount considering current contributions
+    const total401kContributionAmount = employerMatchAmount + currentPreTax + currentAfterTax + electivePreTaxDeferralAmount + electiveAfterTaxDeferralAmount;
 
     return {
         statusCode: 200,
@@ -42,7 +47,10 @@ exports.handler = async (event) => {
             employerMatchAmount: employerMatchAmount.toFixed(2),
             electivePreTaxDeferralAmount: electivePreTaxDeferralAmount.toFixed(2),
             electiveAfterTaxDeferralAmount: electiveAfterTaxDeferralAmount.toFixed(2),
-            total401kContributionAmount: total401kContributionAmount.toFixed(2)
+            total401kContributionAmount: total401kContributionAmount.toFixed(2),
+            // Include current contributions in the response for completeness
+            currentPreTaxContribution: currentPreTax,
+            currentAfterTaxContribution: currentAfterTax
         }),
     };
 };
