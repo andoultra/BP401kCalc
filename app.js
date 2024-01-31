@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
-        fetch('/.netlify/functions/calculateContribution', {
+        fetch('https://melodic-empanada-769e7f.netlify.app/.netlify/functions/calculateContribution', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
