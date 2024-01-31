@@ -58,29 +58,24 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>401(k) Contribution Calculator</h1>
-        <form id="contributionForm">
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required>
-            
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required>
-            
-            <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob" name="dob" required>
-            
-            <label for="salary">Annual Salary ($):</label>
-            <input type="number" id="salary" name="salary" required>
-            
-            <label for="bonus">Bonus (%):</label>
-            <input type="number" id="bonus" name="bonus" step="0.01" required>
-            
-            <label for="currentContributions">Current Contributions ($):</label>
-            <input type="number" id="currentContributions" name="currentContributions" required>
-            
-            <input type="submit" value="Calculate">
-        </form>
+    <h1>401(k) Contribution Calculator</h1>
+    <form id="contributionForm">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required><br><br>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br><br>
+        <label for="salary">Annual Salary ($):</label>
+        <input type="number" id="salary" name="salary" required><br><br>
+        <label for="bonus">Bonus (%):</label>
+        <input type="number" id="bonus" name="bonus" step="0.01" required><br><br>
+        <input type="submit" value="Calculate">
+    </form>
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+    <!-- Add these elements to your existing HTML file within the <body> tag -->
 
 <div id="contributionResults">
     <h2>Contribution Results</h2>
@@ -92,7 +87,6 @@
     <p>Total 401(k) Contribution Amount: $<span id="totalContribution"></span></p>
 </div>
 
-
-    <script src="app.js"></script>
 </body>
 </html>
+

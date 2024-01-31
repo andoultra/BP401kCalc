@@ -1,46 +1,48 @@
+// /netlify/functions/calculateContribution.js
 exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    try {
-        const { dob, salary, bonus, currentContributions } = JSON.parse(event.body);
-        const currentYear = new Date().getFullYear();
-        const birthYear = new Date(dob).getFullYear();
-        const age = currentYear - birthYear;
+    const data = JSON.parse(event.body);
+    const { dob, salary, bonus } = data;
+    const currentYear = new Date().getFullYear();
+    const birthYear = new Date(dob).getFullYear();
+    const age = currentYear - birthYear;
 
-        // Constants for IRS limits and BP specific limits for 2024
-        const IRS_LIMIT = 345000; // 401(a) compensation limit
-        const PRE_TAX_CONTRIBUTION_LIMIT = 23000; // Pre-tax contribution limit for 2024
-        const CATCH_UP_CONTRIBUTION_LIMIT = 7500; // Catch-up contribution for those 50 and older
-        const AFTER_TAX_CONTRIBUTION_LIMIT = 21850; // After-tax contribution limit for BP employees
-        const EMPLOYER_MATCH = 0.07; // BP's 7% match
+    // IRS and BP specific limits for 2024
+    const IRS_LIMIT = 345000;
+    const PRE_TAX_CONTRIBUTION_LIMIT = 23000;
+    const CATCH_UP_CONTRIBUTION_LIMIT = 7500;
+    const AFTER_TAX_CONTRIBUTION_LIMIT = 21850;
+    const EMPLOYER_MATCH = 0.07;
 
-        const bonusAmount = salary * (bonus / 100);
-        const totalCompensation = salary + bonusAmount;
-        const compensationForCalculation = Math.min(totalCompensation, IRS_LIMIT);
+    const bonusAmount = salary * (bonus / 100);
+    const totalCompensation = salary + bonusAmount;
+    const compensationForCalculation = Math.min(totalCompensation, IRS_LIMIT);
 
-        // Adjust for catch-up contributions if over 50
-        const totalPreTaxLimit = age >= 50 ? PRE_TAX_CONTRIBUTION_LIMIT + CATCH_UP_CONTRIBUTION_LIMIT : PRE_TAX_CONTRIBUTION_LIMIT;
+    // Adjust pre-tax contribution limit for catch-up eligibility
+    let adjustedPreTaxContributionLimit = PRE_TAX_CONTRIBUTION_LIMIT + (age >= 50 ? CATCH_UP_CONTRIBUTION_LIMIT : 0);
 
-        // Calculate how much more can be contributed
-        const remainingPreTaxContributionLimit = Math.max(0, totalPreTaxLimit - currentContributions);
-        const remainingAfterTaxContributionLimit = Math.max(0, AFTER_TAX_CONTRIBUTION_LIMIT - currentContributions);
+    // Calculate employer match amount
+    const employerMatchAmount = compensationForCalculation * EMPLOYER_MATCH;
 
-        // Employer match calculation (not exceeding the compensation limit)
-        const employerMatchAmount = Math.min(compensationForCalculation * EMPLOYER_MATCH, IRS_LIMIT);
+    // Calculate elective deferrals in dollar amounts
+    const electivePreTaxDeferralAmount = Math.min(compensationForCalculation * (adjustedPreTaxContributionLimit / compensationForCalculation), adjustedPreTaxContributionLimit);
+    const electiveAfterTaxDeferralAmount = Math.min(compensationForCalculation * (AFTER_TAX_CONTRIBUTION_LIMIT / compensationForCalculation), AFTER_TAX_CONTRIBUTION_LIMIT);
 
-        // Prepare response
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                preTaxContributionLimit: remainingPreTaxContributionLimit,
-                afterTaxContributionLimit: remainingAfterTaxContributionLimit,
-                employerMatchAmount: employerMatchAmount,
-                message: "Calculation completed successfully."
-            }),
-        };
-    } catch (error) {
-        return { statusCode: 500, body: JSON.stringify({ error: "Failed to process the request" }) };
-    }
+    // Calculate total 401(k) contribution amount
+    const total401kContributionAmount = employerMatchAmount + electivePreTaxDeferralAmount + electiveAfterTaxDeferralAmount;
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            preTaxContributionPercentage: ((electivePreTaxDeferralAmount / compensationForCalculation) * 100).toFixed(2),
+            afterTaxContributionPercentage: ((electiveAfterTaxDeferralAmount / compensationForCalculation) * 100).toFixed(2),
+            employerMatchAmount: employerMatchAmount.toFixed(2),
+            electivePreTaxDeferralAmount: electivePreTaxDeferralAmount.toFixed(2),
+            electiveAfterTaxDeferralAmount: electiveAfterTaxDeferralAmount.toFixed(2),
+            total401kContributionAmount: total401kContributionAmount.toFixed(2)
+        }),
+    };
 };
